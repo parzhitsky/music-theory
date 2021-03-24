@@ -62,11 +62,6 @@ namespace Tone {
 }
 
 /** @private */
-interface CalcCodeParams {
-	useEmptyStringForNaturalAlteration?: boolean;
-}
-
-/** @private */
 const distanceFromOctaveStart = {
 	// @ts-ignore (FIXME: enums are broken)
 	[Tone.Letter.C]: 0,
@@ -104,30 +99,11 @@ class Tone extends Entity {
 
 	protected static readonly DOUBLE_SINGLE_SHARP_PATTERN = new RegExp(Tone.AlterationCode.sharp.repeat(2), "g");
 
-	static calcCode(tone: Tone, params: CalcCodeParams = {}): string {
-		const { useEmptyStringForNaturalAlteration = true } = params;
-
-		const chunks = [ letterCodes[tone.letter], "", tone.octave ];
-
-		if (tone.alteration !== 0) {
-			const character = tone.alteration > 0 ? Tone.AlterationCode.sharp : Tone.AlterationCode.flat;
-			const string = character.repeat(Math.abs(tone.alteration));
-
-			chunks[1] = string.replace(Tone.DOUBLE_SINGLE_SHARP_PATTERN, Tone.AlterationCode.doubleSharp);
-		}
-
-		else if (!useEmptyStringForNaturalAlteration)
-			chunks[1] = Tone.AlterationCode.natural;
-
-		return chunks.join("");
-	}
-
 	static calcDistance(to: Tone, from = Tone.BASE): number {
 		return to.value - from.value;
 	}
 
 	public readonly value: number;
-	public readonly code: string;
 
 	constructor(
 		public readonly letter: Tone.Letter,
@@ -137,7 +113,28 @@ class Tone extends Entity {
 		super();
 
 		this.value = octave * Tone.SEMITONES_IN_OCTAVE + distanceFromOctaveStart[letter] + alteration;
-		this.code = Tone.calcCode(this);
+	}
+
+	get code(): string {
+		return this.getCode();
+	}
+
+	getCode(params: Entity.GetCodeParams = {}): string {
+		const { concise = true } = params;
+
+		const chunks = [ letterCodes[this.letter], "", this.octave ];
+
+		if (this.alteration !== 0) {
+			const character = this.alteration > 0 ? Tone.AlterationCode.sharp : Tone.AlterationCode.flat;
+			const string = character.repeat(Math.abs(this.alteration));
+
+			chunks[1] = string.replace(Tone.DOUBLE_SINGLE_SHARP_PATTERN, Tone.AlterationCode.doubleSharp);
+		}
+
+		else if (!concise)
+			chunks[1] = Tone.AlterationCode.natural;
+
+		return chunks.join("");
 	}
 }
 
