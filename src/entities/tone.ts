@@ -15,12 +15,22 @@ namespace Tone {
 		H = 6,
 	}
 
+	export type LetterCode = keyof typeof Tone.Letter;
+
 	export const enum Alteration {
 		doubleFlat = -2,
 		flat = -1,
 		natural = 0,
 		sharp = 1,
 		doubleSharp = 2,
+	}
+
+	export const enum AlterationCode {
+		doubleFlat = "bb",
+		flat = "b",
+		natural = "n",
+		sharp = "#",
+		doubleSharp = "x",
 	}
 
 	export const enum Octave {
@@ -52,6 +62,11 @@ namespace Tone {
 }
 
 /** @private */
+interface CalcCodeParams {
+	useEmptyStringForNaturalAlteration?: boolean;
+}
+
+/** @private */
 const distanceFromOctaveStart = {
 	// @ts-ignore (FIXME: enums are broken)
 	[Tone.Letter.C]: 0,
@@ -69,6 +84,17 @@ const distanceFromOctaveStart = {
 	[Tone.Letter.B]: 11,
 } as const;
 
+/** @private */
+const letterCodes = [
+	"C",
+	"D",
+	"E",
+	"F",
+	"G",
+	"A",
+	"B",
+] as const;
+
 /** @public */
 class Tone extends Entity {
 	public static readonly SEMITONES_IN_OCTAVE = 12;
@@ -76,11 +102,32 @@ class Tone extends Entity {
 	public static readonly CENTS_IN_OCTAVE = Tone.CENTS_IN_SEMITONE * Tone.SEMITONES_IN_OCTAVE;
 	public static readonly BASE = new Tone(Tone.Letter.A, Tone.Alteration.natural, Tone.Octave.oneLine);
 
+	protected static readonly DOUBLE_SINGLE_SHARP_PATTERN = new RegExp(Tone.AlterationCode.sharp.repeat(2), "g");
+
+	static calcCode(tone: Tone, params: CalcCodeParams = {}): string {
+		const { useEmptyStringForNaturalAlteration = true } = params;
+
+		const chunks = [ letterCodes[tone.letter], "", tone.octave ];
+
+		if (tone.alteration !== 0) {
+			const character = tone.alteration > 0 ? Tone.AlterationCode.sharp : Tone.AlterationCode.flat;
+			const string = character.repeat(Math.abs(tone.alteration));
+
+			chunks[1] = string.replace(Tone.DOUBLE_SINGLE_SHARP_PATTERN, Tone.AlterationCode.doubleSharp);
+		}
+
+		else if (!useEmptyStringForNaturalAlteration)
+			chunks[1] = Tone.AlterationCode.natural;
+
+		return chunks.join("");
+	}
+
 	static calcDistance(to: Tone, from = Tone.BASE): number {
 		return to.value - from.value;
 	}
 
 	public readonly value: number;
+	public readonly code: string;
 
 	constructor(
 		public readonly letter: Tone.Letter,
@@ -90,6 +137,7 @@ class Tone extends Entity {
 		super();
 
 		this.value = octave * Tone.SEMITONES_IN_OCTAVE + distanceFromOctaveStart[letter] + alteration;
+		this.code = Tone.calcCode(this);
 	}
 }
 
