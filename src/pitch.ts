@@ -1,8 +1,8 @@
-import Note from "./note";
+import Tone from "./tone";
 
 /** @public */
 class Pitch {
-	public static readonly BASE_NOTE_FREQUENCY = 440;
+	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
 
 	private static readonly noAdjustment: Pitch.Adjustment = { value: 0, unit: null };
@@ -11,39 +11,39 @@ class Pitch {
 	 * @param steps Number of steps to cover (number sign denotes the direction)
 	 * @param stepsInOctave Number of steps in octave
 	 * @example
-	 * Pitch.octaveWalk(semitones, Note.SEMITONES_IN_OCTAVE)
+	 * Pitch.octaveWalk(semitones, Tone.SEMITONES_IN_OCTAVE)
 	 */
 	private static octaveWalk(steps: number, stepsInOctave: number): number {
-		return Pitch.BASE_NOTE_FREQUENCY * (Pitch.OCTAVE_FREQUENCY_DIFFERENCE ** (steps / stepsInOctave));
+		return Pitch.BASE_TONE_FREQUENCY * (Pitch.OCTAVE_FREQUENCY_DIFFERENCE ** (steps / stepsInOctave));
 	}
 
-	private static calcFrequency(note: Note): number {
-		const semitones = Note.calcDistance(note);
+	private static calcFrequency(tone: Tone): number {
+		const semitones = Tone.calcDistance(tone);
 
-		return Pitch.octaveWalk(semitones, Note.SEMITONES_IN_OCTAVE);
+		return Pitch.octaveWalk(semitones, Tone.SEMITONES_IN_OCTAVE);
 	}
 
-	private static calcFrequencyWithCentAdjustment(note: Note, adjustmentValue: number): number {
-		const semitones = Note.calcDistance(note);
-		const cents = semitones * Note.CENTS_IN_SEMITONE + adjustmentValue;
+	private static calcFrequencyWithCentAdjustment(tone: Tone, adjustmentValue: number): number {
+		const semitones = Tone.calcDistance(tone);
+		const cents = semitones * Tone.CENTS_IN_SEMITONE + adjustmentValue;
 
-		return Pitch.octaveWalk(cents, Note.CENTS_IN_OCTAVE);
+		return Pitch.octaveWalk(cents, Tone.CENTS_IN_OCTAVE);
 	}
 
 	public readonly frequency: number;
 
 	constructor(
-		note: Note,
+		tone: Tone,
 		adjustment: Pitch.Adjustment = Pitch.noAdjustment,
 	) {
 		if (adjustment.value === 0)
-			this.frequency = Pitch.calcFrequency(note);
+			this.frequency = Pitch.calcFrequency(tone);
 
 		else if (adjustment.unit === "herz")
-			this.frequency = Pitch.calcFrequency(note) + adjustment.value;
+			this.frequency = Pitch.calcFrequency(tone) + adjustment.value;
 
 		else if (adjustment.unit === "cent")
-			this.frequency = Pitch.calcFrequencyWithCentAdjustment(note, adjustment.value);
+			this.frequency = Pitch.calcFrequencyWithCentAdjustment(tone, adjustment.value);
 
 		else if (adjustment.unit == null)
 			throw new Pitch.InvalidAdjustmentError("unit:unspecified", adjustment);
