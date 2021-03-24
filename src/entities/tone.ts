@@ -1,3 +1,5 @@
+import Entity from "./entity";
+
 /** @public */
 // FIXME: enums are broken, don't add trailing ";" after enum declaration
 namespace Tone {
@@ -68,7 +70,7 @@ const distanceFromOctaveStart = {
 } as const;
 
 /** @public */
-class Tone {
+class Tone extends Entity {
 	public static readonly SEMITONES_IN_OCTAVE = 12;
 	public static readonly CENTS_IN_SEMITONE = 100;
 	public static readonly CENTS_IN_OCTAVE = Tone.CENTS_IN_SEMITONE * Tone.SEMITONES_IN_OCTAVE;
@@ -85,6 +87,8 @@ class Tone {
 		public readonly alteration: Tone.Alteration = Tone.Alteration.natural,
 		public readonly octave: Tone.Octave = Tone.Octave.oneLine,
 	) {
+		super();
+
 		this.value = octave * Tone.SEMITONES_IN_OCTAVE + distanceFromOctaveStart[letter] + alteration;
 	}
 }

@@ -1,7 +1,8 @@
+import Entity from "./entity";
 import Tone from "./tone";
 
 /** @public */
-class Pitch {
+class Pitch extends Entity {
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
 
@@ -36,6 +37,8 @@ class Pitch {
 		tone: Tone,
 		adjustment: Pitch.Adjustment = Pitch.noAdjustment,
 	) {
+		super();
+
 		if (adjustment.value === 0)
 			this.frequency = Pitch.calcFrequency(tone);
 
