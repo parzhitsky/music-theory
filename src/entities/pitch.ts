@@ -1,10 +1,17 @@
 import Entity from "./entity";
 import Tone from "./tone";
 
+/** @private */
+function numberWithSign(value: number): string {
+	return `${value >= 0 ? "+" : ""}${value}`;
+}
+
 /** @public */
 class Pitch extends Entity {
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
+	public static readonly ADJUSTMENT_CODE_PREFIX = "&";
+	public static readonly ADJUSTMENT_CODE_DEFAULT_UNIT: Pitch.AdjustmentUnit = "herz";
 
 	protected static readonly noAdjustment: Pitch.Adjustment = { value: 0, unit: null };
 
@@ -31,11 +38,18 @@ class Pitch extends Entity {
 		return Pitch.octaveWalk(cents, Tone.CENTS_IN_OCTAVE);
 	}
 
+	protected static calcAdjustmentCode(adjustment: Pitch.Adjustment): string {
+		const unit = adjustment.value !== 0 ? adjustment.unit! : Pitch.ADJUSTMENT_CODE_DEFAULT_UNIT;
+		const value = numberWithSign(adjustment.value);
+
+		return Pitch.ADJUSTMENT_CODE_PREFIX + unit + value;
+	}
+
 	public readonly frequency: number;
 
 	constructor(
-		tone: Tone,
-		adjustment: Pitch.Adjustment = Pitch.noAdjustment,
+		protected readonly tone: Tone,
+		protected readonly adjustment: Pitch.Adjustment = Pitch.noAdjustment,
 	) {
 		super();
 
@@ -53,6 +67,17 @@ class Pitch extends Entity {
 
 		else
 			throw new Pitch.InvalidAdjustmentError("unit:unknown", adjustment);
+	}
+
+	getCode(params: Entity.GetCodeParams = {}): string {
+		const { concise = true } = params;
+
+		const chunks: string[] = [ this.tone.getCode({ concise }), "" ];
+
+		if (this.adjustment.value !== 0 || !concise)
+			chunks[1] = Pitch.calcAdjustmentCode(this.adjustment);
+
+		return chunks.join("");
 	}
 }
 
