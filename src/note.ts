@@ -1,4 +1,5 @@
 /** @public */
+// FIXME: ts enums are broken, don't add trailing ";" after enum declaration
 namespace Note {
 	export const enum Letter {
 		C = 0,
@@ -50,19 +51,19 @@ namespace Note {
 
 /** @private */
 const distanceFromOctaveStart = {
-	// @ts-ignore
+	// @ts-ignore (FIXME: ts enums are broken)
 	[Note.Letter.C]: 0,
-	// @ts-ignore
+	// @ts-ignore (FIXME: ts enums are broken)
 	[Note.Letter.D]: 2,
-	// @ts-ignore
+	// @ts-ignore (FIXME: ts enums are broken)
 	[Note.Letter.E]: 4,
-	// @ts-ignore
+	// @ts-ignore (FIXME: ts enums are broken)
 	[Note.Letter.F]: 5,
-	// @ts-ignore
+	// @ts-ignore (FIXME: ts enums are broken)
 	[Note.Letter.G]: 7,
-	// @ts-ignore
+	// @ts-ignore (FIXME: ts enums are broken)
 	[Note.Letter.A]: 9,
-	// @ts-ignore
+	// @ts-ignore (FIXME: ts enums are broken)
 	[Note.Letter.B]: 11,
 } as const;
 
