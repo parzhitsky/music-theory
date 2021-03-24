@@ -5,7 +5,7 @@ class Pitch {
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
 
-	private static readonly noAdjustment: Pitch.Adjustment = { value: 0, unit: null };
+	protected static readonly noAdjustment: Pitch.Adjustment = { value: 0, unit: null };
 
 	/**
 	 * @param steps Number of steps to cover (number sign denotes the direction)
@@ -13,17 +13,17 @@ class Pitch {
 	 * @example
 	 * Pitch.octaveWalk(semitones, Tone.SEMITONES_IN_OCTAVE)
 	 */
-	private static octaveWalk(steps: number, stepsInOctave: number): number {
+	protected static octaveWalk(steps: number, stepsInOctave: number): number {
 		return Pitch.BASE_TONE_FREQUENCY * (Pitch.OCTAVE_FREQUENCY_DIFFERENCE ** (steps / stepsInOctave));
 	}
 
-	private static calcFrequency(tone: Tone): number {
+	protected static calcFrequency(tone: Tone): number {
 		const semitones = Tone.calcDistance(tone);
 
 		return Pitch.octaveWalk(semitones, Tone.SEMITONES_IN_OCTAVE);
 	}
 
-	private static calcFrequencyWithCentAdjustment(tone: Tone, adjustmentValue: number): number {
+	protected static calcFrequencyWithCentAdjustment(tone: Tone, adjustmentValue: number): number {
 		const semitones = Tone.calcDistance(tone);
 		const cents = semitones * Tone.CENTS_IN_SEMITONE + adjustmentValue;
 
