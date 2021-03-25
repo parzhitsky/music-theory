@@ -16,10 +16,6 @@ const kindByUnit = {
 class Interval extends Entity {
 	public static readonly DEFAULT_UNIT: Interval.Unit = "cent";
 
-	public static readonly zero: Interval = new Interval(0);
-	public static readonly quarterToneUp: Interval = new Interval(50);
-	public static readonly quarterToneDown: Interval = new Interval(-50);
-
 	public readonly isZero: boolean = this.value === 0;
 	public readonly isReversed: boolean = this.value < 0;
 	public readonly unit: Interval.Unit | null;
@@ -41,6 +37,10 @@ class Interval extends Entity {
 
 /** @public */
 namespace Interval {
+	export const zero: Interval = new Interval(0);
+	export const quarterToneUp: Interval = new Interval(50);
+	export const quarterToneDown: Interval = new Interval(-50);
+
 	export interface Zero {
 		value: 0;
 		unit: Interval.Unit | null;
