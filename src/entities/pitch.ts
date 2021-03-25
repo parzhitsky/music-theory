@@ -13,8 +13,6 @@ class Pitch extends Entity {
 	public static readonly ADJUSTMENT_CODE_PREFIX = "&";
 	public static readonly ADJUSTMENT_CODE_DEFAULT_UNIT: Pitch.AdjustmentUnit = "cent";
 
-	protected static readonly noAdjustment: Pitch.Adjustment = { value: 0, unit: null };
-
 	/**
 	 * @param steps Number of steps to cover (number sign denotes the direction)
 	 * @param stepsInOctave Number of steps in octave
@@ -49,7 +47,7 @@ class Pitch extends Entity {
 
 	constructor(
 		protected readonly tone: Tone,
-		protected readonly adjustment: Pitch.Adjustment = Pitch.noAdjustment,
+		protected readonly adjustment: Pitch.Adjustment = Pitch.Adjustment.none,
 	) {
 		super();
 
@@ -103,6 +101,12 @@ namespace Pitch {
 		value: number;
 		unit: AdjustmentUnit;
 	};
+
+	export namespace Adjustment {
+		export const none: Pitch.Adjustment = { value: 0 };
+		export const quarterToneUp: Pitch.Adjustment = { value: 50, unit: "cent" };
+		export const quarterToneDown: Pitch.Adjustment = { value: -50, unit: "cent" };
+	}
 
 	const invalidAdjustmentMessageFactory = {
 		"unit:not-supported"(adjustment: Adjustment): string {
