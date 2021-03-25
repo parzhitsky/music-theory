@@ -51,7 +51,7 @@ namespace Interval {
 		unit: Interval.Unit;
 	}
 
-	export type Type = Zero | NonZero;
+	export type Raw = Zero | NonZero;
 
 	type UnitKinds = typeof kindByUnit;
 
