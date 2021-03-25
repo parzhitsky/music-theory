@@ -16,7 +16,7 @@ class Concord extends Entity.Collection<Pitch> {
 	private static readonly CODE_POSTFIX = "]";
 
 	/** Sorted from lowest to highest */
-	protected readonly items: Pitch[];
+	protected readonly items: readonly Pitch[];
 
 	constructor(
 		public readonly duration: Duration,

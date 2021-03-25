@@ -14,7 +14,7 @@ namespace Entity {
 	}
 
 	export abstract class Collection<Item extends Entity> extends Entity {
-		protected abstract readonly items: Item[];
+		protected abstract readonly items: readonly Item[];
 
 		get length(): number {
 			return this.items.length;
