@@ -11,7 +11,7 @@ class Pitch extends Entity {
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
 	public static readonly ADJUSTMENT_CODE_PREFIX = "&";
-	public static readonly ADJUSTMENT_CODE_DEFAULT_UNIT: Pitch.AdjustmentUnit = "herz";
+	public static readonly ADJUSTMENT_CODE_DEFAULT_UNIT: Pitch.AdjustmentUnit = "cent";
 
 	protected static readonly noAdjustment: Pitch.Adjustment = { value: 0, unit: null };
 
