@@ -1,9 +1,15 @@
+declare global {
+	interface Function {
+		new(...args: string[]): Function;
+	}
+}
+
 /** @public */
 abstract class Entity {
 	// abstract equals(entity: this): boolean;
 
 	getCode(): string {
-		return `[object ${this.constructor.name}]`;
+		throw new Entity.NotEncodableError(this.constructor);
 	}
 }
 
@@ -11,6 +17,12 @@ abstract class Entity {
 namespace Entity {
 	export interface GetCodeParams {
 		concise?: boolean;
+	}
+
+	export class NotEncodableError extends Error {
+		constructor(entityConstructor: { new(): object }) {
+			super(`Cannot get code of ${entityConstructor.name} entity`);
+		}
 	}
 
 	export abstract class Collection<Item extends Entity> extends Entity {
