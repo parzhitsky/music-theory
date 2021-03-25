@@ -1,17 +1,13 @@
 import Entity from "./entity";
+import Interval from "./interval";
 import Tone from "./tone";
-
-/** @private */
-function numberWithSign(value: number): string {
-	return `${value >= 0 ? "+" : ""}${value}`;
-}
 
 /** @public */
 class Pitch extends Entity {
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
 	public static readonly ADJUSTMENT_CODE_PREFIX = "&";
-	public static readonly ADJUSTMENT_CODE_DEFAULT_UNIT: Pitch.AdjustmentUnit = "cent";
+	public static readonly ADJUSTMENT_CODE_DEFAULT_UNIT = Interval.DEFAULT_UNIT;
 
 	/**
 	 * @param steps Number of steps to cover (number sign denotes the direction)
@@ -36,35 +32,26 @@ class Pitch extends Entity {
 		return Pitch.octaveWalk(cents, Tone.CENTS_IN_OCTAVE);
 	}
 
-	protected static calcAdjustmentCode(adjustment: Pitch.Adjustment): string {
-		const unit = adjustment.value !== 0 ? adjustment.unit! : Pitch.ADJUSTMENT_CODE_DEFAULT_UNIT;
-		const value = numberWithSign(adjustment.value);
+	protected static calcAdjustmentCode(adjustment: Interval): string {
+		const unit = adjustment.unit ?? Pitch.ADJUSTMENT_CODE_DEFAULT_UNIT;
+		const sign = adjustment.value >= 0 ? "+" : ""; // negative numbers already have the minus sign
 
-		return Pitch.ADJUSTMENT_CODE_PREFIX + unit + value;
+		return Pitch.ADJUSTMENT_CODE_PREFIX + unit + sign + adjustment.value;
 	}
 
 	public readonly frequency: number;
 
 	constructor(
 		protected readonly tone: Tone,
-		protected readonly adjustment: Pitch.Adjustment = Pitch.Adjustment.none,
+		protected readonly adjustment: Interval = Interval.zero,
 	) {
 		super();
 
-		if (adjustment.value === 0)
-			this.frequency = Pitch.calcFrequency(tone);
-
-		else if (adjustment.unit === "herz")
-			this.frequency = Pitch.calcFrequency(tone) + adjustment.value;
-
-		else if (adjustment.unit === "cent")
-			this.frequency = Pitch.calcFrequencyWithCentAdjustment(tone, adjustment.value);
-
-		else if (adjustment.unit == null)
-			throw new Pitch.InvalidAdjustmentError("unit:unspecified", adjustment);
+		if (this.adjustment.unit === "herz")
+			this.frequency = Pitch.calcFrequency(tone) + this.adjustment.value;
 
 		else
-			throw new Pitch.InvalidAdjustmentError("unit:unknown", adjustment);
+			this.frequency = Pitch.calcFrequencyWithCentAdjustment(tone, this.adjustment.value);
 	}
 
 	/**
@@ -80,7 +67,7 @@ class Pitch extends Entity {
 
 		const chunks: string[] = [ this.tone.getCode({ concise }), "" ];
 
-		if (this.adjustment.value !== 0 || !concise)
+		if (!this.adjustment.isZero || !concise)
 			chunks[1] = Pitch.calcAdjustmentCode(this.adjustment);
 
 		return chunks.join("");
@@ -89,44 +76,8 @@ class Pitch extends Entity {
 
 /** @public */
 namespace Pitch {
-	export type AdjustmentUnit =
-		| "cent"
-		| "herz"
-		;
-
-	export type Adjustment = {
-		value: 0;
-		unit?: AdjustmentUnit | null;
-	} | {
-		value: number;
-		unit: AdjustmentUnit;
-	};
-
-	export namespace Adjustment {
-		export const none: Pitch.Adjustment = { value: 0 };
-		export const quarterToneUp: Pitch.Adjustment = { value: 50, unit: "cent" };
-		export const quarterToneDown: Pitch.Adjustment = { value: -50, unit: "cent" };
-	}
-
-	const invalidAdjustmentMessageFactory = {
-		"unit:not-supported"(adjustment: Adjustment): string {
-			return `Adjustment unit "${adjustment.unit}" is not yet supported`;
-		},
-		"unit:unspecified"(adjustment: Adjustment): string {
-			return `Adjustment unit must be specified for non-zero adjustments: ${JSON.stringify(adjustment)}`;
-		},
-		"unit:unknown"(adjustment: { unit?: unknown }): string {
-			return `Encountered unknown adjustment unit: "${adjustment.unit}"`;
-		},
-	} as const;
-
-	type InvalidAdjustmentErrorCode = keyof typeof invalidAdjustmentMessageFactory;
-
-	export class InvalidAdjustmentError extends Error {
-		constructor(code: InvalidAdjustmentErrorCode, adjustment: Adjustment) {
-			super(invalidAdjustmentMessageFactory[code](adjustment));
-		}
-	}
+	/** @alias `Interval` */
+	export type Adjustment = Interval;
 }
 
 export default Pitch;
