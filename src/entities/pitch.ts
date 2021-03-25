@@ -69,6 +69,14 @@ class Pitch extends Entity {
 			throw new Pitch.InvalidAdjustmentError("unit:unknown", adjustment);
 	}
 
+	/**
+	 * @example
+	 * const gSharp3 = new Tone(4, 1, 3);
+	 * const gSharp3Up20Hz = new Pitch(gSharp3, { value: 20, unit: "herz" });
+	 *
+	 * gSharp3Up20Hz.getCode();
+	 * // => "G#3&herz+20"
+	 */
 	getCode(params: Entity.GetCodeParams = {}): string {
 		const { concise = true } = params;
 

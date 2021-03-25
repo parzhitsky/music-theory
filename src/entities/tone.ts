@@ -119,6 +119,13 @@ class Tone extends Entity {
 		return this.getCode();
 	}
 
+	/**
+	 * @example
+	 * const gSharp3 = new Tone(4, 1, 3);
+	 *
+	 * gSharp3.getCode();
+	 * // => "G#3"
+	 */
 	getCode(params: Entity.GetCodeParams = {}): string {
 		const { concise = true } = params;
 
