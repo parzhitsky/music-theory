@@ -96,10 +96,13 @@ namespace Pitch {
 		| "herz"
 		;
 
-	export interface Adjustment {
+	export type Adjustment = {
+		value: 0;
+		unit?: AdjustmentUnit | null;
+	} | {
 		value: number;
-		unit: AdjustmentUnit | null; // unit isn't needed if `value` is `0`
-	}
+		unit: AdjustmentUnit;
+	};
 
 	const invalidAdjustmentMessageFactory = {
 		"unit:not-supported"(adjustment: Adjustment): string {
