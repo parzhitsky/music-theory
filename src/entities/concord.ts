@@ -11,12 +11,12 @@ namespace Concord {
 }
 
 /** @public */
-class Concord extends Entity {
+class Concord extends Entity.Collection<Pitch> {
 	private static readonly CODE_PREFIX = "[";
 	private static readonly CODE_POSTFIX = "]";
 
 	/** Sorted from lowest to highest */
-	public readonly pitches: Pitch[] = [];
+	protected readonly items: Pitch[];
 
 	constructor(
 		public readonly duration: Duration,
@@ -24,7 +24,7 @@ class Concord extends Entity {
 	) {
 		super();
 
-		this.pitches = items
+		this.items = items
 			.map((item) => "pitch" in item ? item.pitch : item)
 			.sort((a, b) => a.frequency - b.frequency);
 	}
@@ -36,7 +36,7 @@ class Concord extends Entity {
 		} = params;
 
 		const pitchGetCodeParams = { concise };
-		const pitchCodes = this.pitches.map((pitch) => pitch.getCode(pitchGetCodeParams));
+		const pitchCodes = this.items.map((pitch) => pitch.getCode(pitchGetCodeParams));
 		const spaceAround = padWithSpacesAround ? " " : "";
 
 		const chunks: string[] = [
