@@ -37,11 +37,14 @@ class Pitch extends Entity {
 
 		const semitones = Tone.calcDistance(tone);
 
-		if (this.adjustment.unit === "herz")
-			this.frequency = Pitch.calcFrequency(semitones, Tone.SEMITONES_IN_OCTAVE) + this.adjustment.value;
+		if (adjustment.unit === "cent")
+			this.frequency = Pitch.calcFrequency(semitones * Tone.CENTS_IN_SEMITONE + adjustment.value, Tone.CENTS_IN_OCTAVE);
+
+		else if (adjustment.unit === "herz" || adjustment.isZero)
+			this.frequency = Pitch.calcFrequency(semitones, Tone.SEMITONES_IN_OCTAVE) + adjustment.value;
 
 		else
-			this.frequency = Pitch.calcFrequency(semitones * Tone.CENTS_IN_SEMITONE + this.adjustment.value, Tone.CENTS_IN_OCTAVE);
+			throw new Pitch.UnknownAdjustmentUnitError(adjustment.unit);
 	}
 
 	/**
@@ -68,6 +71,12 @@ class Pitch extends Entity {
 namespace Pitch {
 	/** @alias `Interval` */
 	export type Adjustment = Interval;
+
+	export class UnknownAdjustmentUnitError extends Error {
+		constructor(unit: unknown) {
+			super(`Unknown adjustment unit: ${unit}`);
+		}
+	}
 }
 
 export default Pitch;

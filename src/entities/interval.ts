@@ -1,5 +1,17 @@
 import Entity from "./entity";
 
+/** @private */
+type KeysByValue<Value extends Obj[keyof Obj], Obj extends object> = {
+	[Key in keyof Obj]: Obj[Key] extends Value ? Key : never;
+}[keyof Obj];
+
+/** @private */
+const kindByUnit = {
+	cent: "chromatic",
+	herz: "chromatic",
+	// tone: "diatonic",
+} as const;
+
 /** @public */
 class Interval extends Entity {
 	public static readonly DEFAULT_UNIT: Interval.Unit = "cent";
@@ -8,9 +20,10 @@ class Interval extends Entity {
 	public static readonly quarterToneUp: Interval = new Interval(50);
 	public static readonly quarterToneDown: Interval = new Interval(-50);
 
-	public readonly unit: Interval.Unit | null;
 	public readonly isZero: boolean = this.value === 0;
 	public readonly isReversed: boolean = this.value < 0;
+	public readonly unit: Interval.Unit | null;
+	public readonly kind: Interval.Kind;
 
 	constructor(
 		public readonly value: number,
@@ -18,10 +31,11 @@ class Interval extends Entity {
 	) {
 		super();
 
-		this.unit = unit ?? null;
-
-		if (this.value !== 0 && this.unit == null)
+		if (value !== 0 && unit == null)
 			throw new Interval.UnitUnspecifiedError(value, unit);
+
+		this.unit = unit ?? null;
+		this.kind = kindByUnit[this.unit ?? Interval.DEFAULT_UNIT];
 	}
 }
 
@@ -39,10 +53,15 @@ namespace Interval {
 
 	export type Type = Zero | NonZero;
 
-	export type Unit =
-		| "cent"
-		| "herz"
-		;
+	type UnitKinds = typeof kindByUnit;
+
+	export type Unit = keyof UnitKinds;
+	export type Kind = UnitKinds[Unit];
+
+	export namespace Unit {
+		export type Chromatic = KeysByValue<"chromatic", UnitKinds>;
+		// export type Diatonic = KeysByValue<"diatonic", UnitKinds>;
+	}
 
 	export class UnitUnspecifiedError extends Error {
 		constructor(...[ value, unit ]: ConstructorParameters<typeof Interval>) {
