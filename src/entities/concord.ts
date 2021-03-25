@@ -7,7 +7,6 @@ import Pitch from "./pitch";
 namespace Concord {
 	export interface GetCodeParams extends Entity.GetCodeParams {
 		padWithSpacesAround?: boolean;
-		padWithSpacesBetween?: boolean;
 	}
 }
 
@@ -34,20 +33,16 @@ class Concord extends Entity {
 		const {
 			concise = true,
 			padWithSpacesAround = true,
-			padWithSpacesBetween = true,
 		} = params;
 
 		const pitchGetCodeParams = { concise };
-		const pitchCodes = this.pitches
-			.map((pitch) => pitch.getCode(pitchGetCodeParams))
-			.join(padWithSpacesBetween ? ", " : ",");
-
+		const pitchCodes = this.pitches.map((pitch) => pitch.getCode(pitchGetCodeParams));
 		const spaceAround = padWithSpacesAround ? " " : "";
 
 		const chunks: string[] = [
 			Concord.CODE_PREFIX,
 			spaceAround,
-			...pitchCodes,
+			...pitchCodes.join(" "),
 			spaceAround,
 			Concord.CODE_POSTFIX,
 		];
