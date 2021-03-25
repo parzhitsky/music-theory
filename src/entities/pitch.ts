@@ -4,6 +4,7 @@ import Tone from "./tone";
 
 /** @public */
 class Pitch extends Entity {
+	/** Frequency of `Tone.BASE` */
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
 	public static readonly ADJUSTMENT_CODE_PREFIX = "&";
@@ -13,23 +14,10 @@ class Pitch extends Entity {
 	 * @param steps Number of steps to cover (number sign denotes the direction)
 	 * @param stepsInOctave Number of steps in octave
 	 * @example
-	 * Pitch.octaveWalk(semitones, Tone.SEMITONES_IN_OCTAVE)
+	 * Pitch.calcFrequency(semitones, Tone.SEMITONES_IN_OCTAVE)
 	 */
-	protected static octaveWalk(steps: number, stepsInOctave: number): number {
+	protected static calcFrequency(steps: number, stepsInOctave: number): number {
 		return Pitch.BASE_TONE_FREQUENCY * (Pitch.OCTAVE_FREQUENCY_DIFFERENCE ** (steps / stepsInOctave));
-	}
-
-	protected static calcFrequency(tone: Tone): number {
-		const semitones = Tone.calcDistance(tone);
-
-		return Pitch.octaveWalk(semitones, Tone.SEMITONES_IN_OCTAVE);
-	}
-
-	protected static calcFrequencyWithCentAdjustment(tone: Tone, adjustmentValue: number): number {
-		const semitones = Tone.calcDistance(tone);
-		const cents = semitones * Tone.CENTS_IN_SEMITONE + adjustmentValue;
-
-		return Pitch.octaveWalk(cents, Tone.CENTS_IN_OCTAVE);
 	}
 
 	protected static calcAdjustmentCode(adjustment: Interval): string {
@@ -47,11 +35,13 @@ class Pitch extends Entity {
 	) {
 		super();
 
+		const semitones = Tone.calcDistance(tone);
+
 		if (this.adjustment.unit === "herz")
-			this.frequency = Pitch.calcFrequency(tone) + this.adjustment.value;
+			this.frequency = Pitch.calcFrequency(semitones, Tone.SEMITONES_IN_OCTAVE) + this.adjustment.value;
 
 		else
-			this.frequency = Pitch.calcFrequencyWithCentAdjustment(tone, this.adjustment.value);
+			this.frequency = Pitch.calcFrequency(semitones * Tone.CENTS_IN_SEMITONE + this.adjustment.value, Tone.CENTS_IN_OCTAVE);
 	}
 
 	/**
