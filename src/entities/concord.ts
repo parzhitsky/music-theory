@@ -37,13 +37,13 @@ class Concord extends Entity.Collection<Pitch> {
 
 		const pitchGetCodeParams = { concise };
 		const pitchCodes = this.items.map((pitch) => pitch.getCode(pitchGetCodeParams));
-		const spaceAround = padWithSpacesAround ? " " : "";
+		const padding = padWithSpacesAround ? " " : "";
 
 		const chunks: string[] = [
 			Concord.CODE_PREFIX,
-			spaceAround,
+			padding,
 			...pitchCodes.join(" "),
-			spaceAround,
+			padding,
 			Concord.CODE_POSTFIX,
 		];
 
