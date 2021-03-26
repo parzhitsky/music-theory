@@ -115,10 +115,6 @@ class Tone extends Entity {
 		this.value = octave * Tone.SEMITONES_IN_OCTAVE + distanceFromOctaveStart[letter] + alteration;
 	}
 
-	get code(): string {
-		return this.getCode();
-	}
-
 	/**
 	 * @example
 	 * const gSharp3 = new Tone(4, 1, 3);
