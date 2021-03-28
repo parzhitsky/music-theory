@@ -128,6 +128,9 @@ class Tone extends Entity {
 	}
 
 	transpose(interval: Interval, direction = Entity.Direction.up): Tone {
+		if (!interval.adjustment.isZero)
+			throw new Tone.UnsupportedAdjustmentError(interval.adjustment, "tones can be transposed only by unadjusted intervals");
+
 		const letterWithOverflow = this.letter + interval.letterDiff * direction;
 		const octaveRollOver = Math.floor(letterWithOverflow / Tone.LETTERS_IN_OCTAVE);
 		const letter = Tone.mod(letterWithOverflow);

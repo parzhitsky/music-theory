@@ -1,4 +1,5 @@
 import Entity from "./entity";
+import Adjustment from "./adjustment";
 
 /** @private */
 const origins = {
@@ -79,18 +80,25 @@ class Interval extends Entity {
 	public readonly letterDiff = origins[this.origin].kindIndex;
 	public readonly kind = kinds[this.letterDiff];
 
-	public readonly semitones =
+	public readonly semitonesWithoutAdjustment =
 		this.origin + this.augmentation + this.octaves * Interval.SEMITONES_IN_OCTAVE;
+	public readonly semitonesWithAdjustment = this.semitonesWithoutAdjustment;
+	public readonly semitones =
+		this.semitonesWithoutAdjustment + this.adjustment.value * Interval.CENTS_IN_SEMITONE;
 
 	constructor(
 		public readonly origin: Interval.Origin,
 		public readonly augmentation = Interval.Augmentation.none,
 		public readonly octaves = 0,
+		public readonly adjustment = Adjustment.zero,
 	) {
 		super();
 
 		if (octaves % 1 !== 0)
 			throw new Interval.InvalidArgumentError("octaves", octaves, "value must be an integer");
+
+		if (!adjustment.isZero && adjustment.unit !== "cent")
+			throw new Interval.UnsupportedAdjustmentError(adjustment, "intervals only support 'cent' adjustments");
 	}
 }
 
