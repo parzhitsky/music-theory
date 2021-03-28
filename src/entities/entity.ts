@@ -43,10 +43,6 @@ namespace Entity {
 	export abstract class Collection<Item extends Entity> extends Entity {
 		protected abstract readonly items: readonly Item[];
 
-		get length(): number {
-			return this.items.length;
-		}
-
 		hasItem(index: number): boolean {
 			return this.items[index] != null;
 		}
