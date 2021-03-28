@@ -4,7 +4,7 @@ import Interval from "./interval";
 import Tone from "./tone";
 
 /** @public */
-class Pitch extends Entity {
+class Pitch extends Entity implements Entity.Adjustable {
 	/** Frequency of `Tone.BASE` */
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
@@ -22,8 +22,8 @@ class Pitch extends Entity {
 	public readonly frequency: number;
 
 	constructor(
-		protected readonly tone: Tone,
-		protected readonly adjustment: Adjustment = Adjustment.zero,
+		public readonly tone: Tone,
+		public readonly adjustment: Adjustment = Adjustment.zero,
 	) {
 		super();
 
@@ -42,7 +42,7 @@ class Pitch extends Entity {
 	/**
 	 * @example
 	 * const gSharp3 = new Tone(4, 1, 3);
-	 * const gSharp3Up20Hz = new Pitch(gSharp3, { value: 20, unit: "herz" });
+	 * const gSharp3Up20Hz = new Pitch(gSharp3, new Adjustment(20, "herz"));
 	 *
 	 * gSharp3Up20Hz.getCode();
 	 * // => "G#3&herz+20"
@@ -56,6 +56,20 @@ class Pitch extends Entity {
 			chunks[1] = this.adjustment.getCode();
 
 		return chunks.join("");
+	}
+
+	adjust(adjustment: Adjustment): Pitch {
+		if (this.adjustment.isZero)
+			return this;
+
+		return new Pitch(this.tone, this.adjustment.add(adjustment));
+	}
+
+	unadjusted(): Pitch {
+		if (this.adjustment.isZero)
+			return this;
+
+		return new Pitch(this.tone, Adjustment.zero);
 	}
 }
 

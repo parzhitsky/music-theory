@@ -71,7 +71,7 @@ namespace Interval {
 }
 
 /** @public */
-class Interval extends Entity {
+class Interval extends Entity implements Entity.Adjustable {
 	public static readonly SEMITONES_IN_OCTAVE = 12;
 	public static readonly CENTS_IN_SEMITONE = 100;
 	public static readonly CENTS_IN_OCTAVE = Interval.CENTS_IN_SEMITONE * Interval.SEMITONES_IN_OCTAVE;
@@ -99,6 +99,20 @@ class Interval extends Entity {
 
 		if (!adjustment.isZero && adjustment.unit !== "cent")
 			throw new Interval.UnsupportedAdjustmentError(adjustment, "intervals support only zero and 'cent' adjustments");
+	}
+
+	adjust(adjustment: Adjustment): Interval {
+		if (adjustment.isZero)
+			return this;
+
+		return new Interval(this.origin, this.augmentation, this.octaves, this.adjustment.add(adjustment));
+	}
+
+	unadjusted(): Interval {
+		if (this.adjustment.isZero)
+			return this;
+
+		return new Interval(this.origin, this.augmentation, this.octaves, Adjustment.zero);
 	}
 }
 

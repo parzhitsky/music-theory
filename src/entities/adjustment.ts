@@ -27,6 +27,13 @@ class Adjustment extends Entity {
 		return Adjustment.CODE_PREFIX + unit + sign + this.value;
 	}
 
+	negated() {
+		if (this.isZero)
+			return this;
+
+		return new Adjustment(-this.value, this.unit);
+	}
+
 	add(other: Adjustment): Adjustment {
 		if (other.isZero)
 			return this;

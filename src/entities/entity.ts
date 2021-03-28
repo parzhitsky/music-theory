@@ -30,6 +30,13 @@ namespace Entity {
 		down = -1,
 	};
 
+	export interface Adjustable {
+		readonly adjustment: Adjustment;
+
+		adjust(adjustment: Adjustment): ThisType<this>;
+		unadjusted(): ThisType<this>;
+	}
+
 	export abstract class Error extends global.Error {
 		constructor(message: string, hint?: string) {
 			super(`${message}${hint == null ? "" : ` (${hint})`}`);
