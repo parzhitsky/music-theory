@@ -26,6 +26,19 @@ class Adjustment extends Entity {
 
 		return Adjustment.CODE_PREFIX + unit + sign + this.value;
 	}
+
+	add(other: Adjustment): Adjustment {
+		if (other.isZero)
+			return this;
+
+		if (this.isZero)
+			return other;
+
+		if (other.unit !== this.unit)
+			throw new Adjustment.AddError(`units aren't the same: "${this.unit}" and "${other.unit}"`);
+
+		return new Adjustment(this.value + other.value, this.unit);
+	}
 }
 
 /** @public */
@@ -40,6 +53,12 @@ namespace Adjustment {
 	export class UnitUnspecifiedError extends Entity.Error {
 		constructor(value: number, unit: unknown) {
 			super("Non-zero adjustment must have a specified unit", JSON.stringify({ value, unit }));
+		}
+	}
+
+	export class AddError extends Entity.Error {
+		constructor(hint: string) {
+			super("Failed to add two adjustments", hint);
 		}
 	}
 }
