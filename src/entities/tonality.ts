@@ -1,6 +1,6 @@
 import Entity from "./entity";
 import Interval from "./interval";
-import Tone from "./tone";
+import type Tone from "./tone";
 
 /** @private */
 const tone = new Interval(Interval.Origin.majorSecond);

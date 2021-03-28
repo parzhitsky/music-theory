@@ -1,7 +1,7 @@
 import Entity from "./entity";
-import Pitch from "./pitch";
-import Duration from "./duration";
-import Interval from "./interval";
+import type Pitch from "./pitch";
+import type Duration from "./duration";
+import type Interval from "./interval";
 
 /** @public */
 class Note extends Entity implements Entity.Transposable {

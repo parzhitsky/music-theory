@@ -1,8 +1,8 @@
 import Entity from "./entity";
-import Duration from "./duration";
-import Note from "./note";
-import Pitch from "./pitch";
-import Interval from "./interval";
+import type Duration from "./duration";
+import type Note from "./note";
+import type Pitch from "./pitch";
+import type Interval from "./interval";
 
 /** @public */
 namespace Concord {
