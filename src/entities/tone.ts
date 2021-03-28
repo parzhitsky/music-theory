@@ -1,106 +1,91 @@
 import Entity from "./entity";
-
-/** @public */
-// FIXME: enums are broken, don't add trailing ";" after enum declaration
-namespace Tone {
-	export const enum Letter {
-		C = 0,
-		D = 1,
-		E = 2,
-		F = 3,
-		G = 4,
-		A = 5,
-		B = 6,
-		/** @deprecated Use `Tone.Letter.B` instead */
-		H = 6,
-	}
-
-	export type LetterCode = keyof typeof Tone.Letter;
-
-	export const enum Alteration {
-		doubleFlat = -2,
-		flat = -1,
-		natural = 0,
-		sharp = 1,
-		doubleSharp = 2,
-	}
-
-	export const enum AlterationCode {
-		doubleFlat = "bb",
-		flat = "b",
-		natural = "n",
-		sharp = "#",
-		doubleSharp = "x",
-	}
-
-	export const enum Octave {
-		subContra = 0,
-
-		contra = 1,
-
-		great = 2,
-
-		small = 3,
-		/** @alias Tone.Octave.small */ firstSmall = 3,
-
-		oneLine = 4,
-		/** @alias Tone.Octave.oneLine */ middle = 4,
-		/** @alias Tone.Octave.oneLine */ secondSmall = 4,
-
-		twoLine = 5,
-		/** @alias Tone.Octave.twoLine */ thirdSmall = 5,
-
-		threeLine = 6,
-		/** @alias Tone.Octave.threeLine */ fourthSmall = 6,
-
-		fourLine = 7,
-		/** @alias Tone.Octave.fourLine */ fifthSmall = 7,
-
-		fiveLine = 8,
-		/** @alias Tone.Octave.fiveLine */ sixthSmall = 8,
-	}
-}
+import Interval from "./interval";
 
 /** @private */
-const distanceFromOctaveStart = {
-	// @ts-ignore (FIXME: enums are broken)
-	[Tone.Letter.C]: 0,
-	// @ts-ignore (FIXME: enums are broken)
-	[Tone.Letter.D]: 2,
-	// @ts-ignore (FIXME: enums are broken)
-	[Tone.Letter.E]: 4,
-	// @ts-ignore (FIXME: enums are broken)
-	[Tone.Letter.F]: 5,
-	// @ts-ignore (FIXME: enums are broken)
-	[Tone.Letter.G]: 7,
-	// @ts-ignore (FIXME: enums are broken)
-	[Tone.Letter.A]: 9,
-	// @ts-ignore (FIXME: enums are broken)
-	[Tone.Letter.B]: 11,
+const letters = {
+	[0]: {
+		code: "C",
+		semitonesFromC: Interval.Origin.perfectUnison,
+	},
+	[1]: {
+		code: "D",
+		semitonesFromC: Interval.Origin.majorSecond,
+	},
+	[2]: {
+		code: "E",
+		semitonesFromC: Interval.Origin.majorThird,
+	},
+	[3]: {
+		code: "F",
+		semitonesFromC: Interval.Origin.perfectFourth,
+	},
+	[4]: {
+		code: "G",
+		semitonesFromC: Interval.Origin.perfectFifth,
+	},
+	[5]: {
+		code: "A",
+		semitonesFromC: Interval.Origin.majorSixth,
+	},
+	[6]: {
+		code: "B",
+		semitonesFromC: Interval.Origin.majorSeventh,
+	},
 } as const;
 
 /** @private */
-const letterCodes = [
-	"C",
-	"D",
-	"E",
-	"F",
-	"G",
-	"A",
-	"B",
-] as const;
+const alterations = {
+	[-2]: {
+		name: "doubleFlat",
+		code: "bb",
+	},
+	[-1]: {
+		name: "flat",
+		code: "b",
+	},
+	[+0]: {
+		name: "natural",
+		code: "n",
+	},
+	[+1]: {
+		name: "sharp",
+		code: "#",
+	},
+	[+2]: {
+		name: "doubleSharp",
+		code: "x",
+	},
+} as const;
+
+/** @public */
+namespace Tone {
+	type Letters = typeof letters;
+
+	export type Letter = keyof Letters;
+	export type Alteration = number;
+	export type Octave = number;
+
+	export type LetterCode = Letters[Letter]["code"];
+}
 
 /** @public */
 class Tone extends Entity {
-	public static readonly SEMITONES_IN_OCTAVE = 12;
-	public static readonly CENTS_IN_SEMITONE = 100;
-	public static readonly CENTS_IN_OCTAVE = Tone.CENTS_IN_SEMITONE * Tone.SEMITONES_IN_OCTAVE;
-	public static readonly BASE = new Tone(Tone.Letter.A, Tone.Alteration.natural, Tone.Octave.oneLine);
+	public static readonly LETTERS_IN_OCTAVE = Object.keys(letters).length as 7;
+	public static readonly BASE =
+		new Tone(/* Tone.Letter.A */ 5, /* Tone.Alteration.natural */ 0, /* Tone.Octave.oneLine */ 4);
 
-	protected static readonly DOUBLE_SINGLE_SHARP_PATTERN = new RegExp(Tone.AlterationCode.sharp.repeat(2), "g");
+	protected static readonly DOUBLE_SINGLE_SHARP_PATTERN = new RegExp(alterations[1].code.repeat(2), "g");
+
+	static calcValue(letter: Tone.Letter, alteration: Tone.Alteration, octave: Tone.Octave): number {
+		return octave * Interval.SEMITONES_IN_OCTAVE + letters[letter].semitonesFromC + alteration;
+	}
 
 	static calcDistance(to: Tone, from = Tone.BASE): number {
 		return to.value - from.value;
+	}
+
+	static mod(from: number, steps = 0, direction = Entity.Direction.up): Tone.Letter {
+		return super._modulo(Tone.LETTERS_IN_OCTAVE, from + steps * direction) as Tone.Letter;
 	}
 
 	public readonly value: number;
@@ -112,7 +97,7 @@ class Tone extends Entity {
 	) {
 		super();
 
-		this.value = octave * Tone.SEMITONES_IN_OCTAVE + distanceFromOctaveStart[letter] + alteration;
+		this.value = Tone.calcValue(letter, alteration, octave);
 	}
 
 	/**
@@ -125,11 +110,13 @@ class Tone extends Entity {
 	getCode(params: Entity.GetCodeParams = {}): string {
 		const { concise = true } = params;
 
-		const chunks = [ letterCodes[this.letter], "", this.octave ];
+		const chunks = [ letters[this.letter].code, "", this.octave ];
 
 		if (this.alteration !== 0) {
-			const character = this.alteration > 0 ? Tone.AlterationCode.sharp : Tone.AlterationCode.flat;
-			const string = character.repeat(Math.abs(this.alteration));
+			const sign = Math.sign(this.alteration) as Entity.Direction;
+			const character = alterations[sign].code;
+			const size = Math.abs(this.alteration);
+			const string = character.repeat(size);
 
 			chunks[1] = string.replace(Tone.DOUBLE_SINGLE_SHARP_PATTERN, Tone.AlterationCode.doubleSharp);
 		}
@@ -138,6 +125,51 @@ class Tone extends Entity {
 			chunks[1] = Tone.AlterationCode.natural;
 
 		return chunks.join("");
+	}
+}
+
+/** @public */
+namespace Tone {
+	export namespace Letter {
+		export const C = 0;
+		export const D = 1;
+		export const E = 2;
+		export const F = 3;
+		export const G = 4;
+		export const A = 5;
+		export const B = 6;
+
+		/** @deprecated Use `Tone.Letter.B` instead */
+		export const H = 6;
+	}
+
+	export namespace Alteration {
+		export const doubleFlat = -2;
+		export const flat = -1;
+		export const natural = 0;
+		export const sharp = 1;
+		export const doubleSharp = 2;
+	}
+
+	export namespace AlterationCode {
+		export const doubleFlat = alterations[Alteration.doubleFlat].code;
+		export const flat = alterations[Alteration.flat].code;
+		export const natural = alterations[Alteration.natural].code;
+		export const sharp = alterations[Alteration.sharp].code;
+		export const doubleSharp = alterations[Alteration.doubleSharp].code;
+	}
+
+	export namespace Octave {
+		export const subContra = 0;
+		export const contra = 1;
+		export const great = 2;
+		export const small = 3;
+		export const oneLine = 4;
+		/** @alias Tone.Octave.oneLine */ export const middle = 4;
+		export const twoLine = 5;
+		export const threeLine = 6;
+		export const fourLine = 7;
+		export const fiveLine = 8;
 	}
 }
 

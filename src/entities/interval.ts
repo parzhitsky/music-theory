@@ -1,73 +1,122 @@
 import Entity from "./entity";
 
 /** @private */
-type KeysByValue<Value extends Obj[keyof Obj], Obj extends object> = {
-	[Key in keyof Obj]: Obj[Key] extends Value ? Key : never;
-}[keyof Obj];
+const origins = {
+	[0]: {
+		quality: "Perfect",
+		kindIndex: 0,
+	},
+	[1]: {
+		quality: "Minor",
+		kindIndex: 1,
+	},
+	[2]: {
+		quality: "Major",
+		kindIndex: 1,
+	},
+	[3]: {
+		quality: "Minor",
+		kindIndex: 2,
+	},
+	[4]: {
+		quality: "Major",
+		kindIndex: 2,
+	},
+	[5]: {
+		quality: "Perfect",
+		kindIndex: 3,
+	},
+	[7]: {
+		quality: "Perfect",
+		kindIndex: 4,
+	},
+	[8]: {
+		quality: "Minor",
+		kindIndex: 5,
+	},
+	[9]: {
+		quality: "Major",
+		kindIndex: 5,
+	},
+	[10]: {
+		quality: "Minor",
+		kindIndex: 6,
+	},
+	[11]: {
+		quality: "Major",
+		kindIndex: 6,
+	},
+} as const;
 
 /** @private */
-const kindByUnit = {
-	cent: "chromatic",
-	herz: "chromatic",
-	// tone: "diatonic",
-} as const;
+const kinds = [
+	"Unison",
+	"Second",
+	"Third",
+	"Fourth",
+	"Fifth",
+	"Sixth",
+	"Seventh",
+] as const;
+
+/** @public */
+namespace Interval {
+	type Origins = typeof origins;
+
+	export type Kind = (typeof kinds)[number];
+	export type Origin = keyof Origins;
+	export type Quality = Origins[Origin]["quality"];
+	export type Augmentation = number;
+}
 
 /** @public */
 class Interval extends Entity {
-	public static readonly DEFAULT_UNIT: Interval.Unit = "cent";
+	public static readonly SEMITONES_IN_OCTAVE = 12;
+	public static readonly CENTS_IN_SEMITONE = 100;
+	public static readonly CENTS_IN_OCTAVE = Interval.CENTS_IN_SEMITONE * Interval.SEMITONES_IN_OCTAVE;
 
-	public readonly isZero: boolean = this.value === 0;
-	public readonly isReversed: boolean = this.value < 0;
-	public readonly unit: Interval.Unit | null;
-	public readonly kind: Interval.Kind;
+	public readonly quality = origins[this.origin].quality;
+	public readonly letterDiff = origins[this.origin].kindIndex;
+	public readonly kind = kinds[this.letterDiff];
+
+	public readonly semitones =
+		this.origin + this.augmentation + this.octaves * Interval.SEMITONES_IN_OCTAVE;
 
 	constructor(
-		public readonly value: number,
-		unit: Interval.Unit | null = Interval.DEFAULT_UNIT,
+		public readonly origin: Interval.Origin,
+		public readonly augmentation = Interval.Augmentation.none,
+		public readonly octaves = 0,
 	) {
 		super();
 
-		if (value !== 0 && unit == null)
-			throw new Interval.UnitUnspecifiedError(value, unit);
-
-		this.unit = unit ?? null;
-		this.kind = kindByUnit[this.unit ?? Interval.DEFAULT_UNIT];
+		if (octaves % 1 !== 0)
+			throw new Entity.InvalidArgumentError("octaves", octaves, "value must be an integer");
 	}
 }
 
 /** @public */
 namespace Interval {
-	export const zero: Interval = new Interval(0);
-	export const quarterToneUp: Interval = new Interval(50);
-	export const quarterToneDown: Interval = new Interval(-50);
-
-	export interface Zero {
-		value: 0;
-		unit: Interval.Unit | null;
+	export namespace Origin {
+		export const perfectUnison = 0;
+		export const minorSecond = 1;
+		export const majorSecond = 2;
+		export const minorThird = 3;
+		export const majorThird = 4;
+		export const perfectFourth = 5;
+		export const perfectFifth = 7;
+		export const minorSixth = 8;
+		export const majorSixth = 9;
+		export const minorSeventh = 10;
+		export const majorSeventh = 11;
 	}
 
-	export interface NonZero {
-		value: number;
-		unit: Interval.Unit;
-	}
-
-	export type Raw = Zero | NonZero;
-
-	type UnitKinds = typeof kindByUnit;
-
-	export type Unit = keyof UnitKinds;
-	export type Kind = UnitKinds[Unit];
-
-	export namespace Unit {
-		export type Chromatic = KeysByValue<"chromatic", UnitKinds>;
-		// export type Diatonic = KeysByValue<"diatonic", UnitKinds>;
-	}
-
-	export class UnitUnspecifiedError extends Error {
-		constructor(...[ value, unit ]: ConstructorParameters<typeof Interval>) {
-			super(`Intervals with non-zero values must have unit specified (value: ${value}, unit: ${unit})`);
-		}
-	}
+	export namespace Augmentation {
+		export const dimDim = -2;
+		export const dim = -1;
+		export const none = 0;
+		export const aug = +1;
+		export const augAug = +2;
+	};
 }
 
 export default Interval;
