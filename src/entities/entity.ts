@@ -20,7 +20,7 @@ namespace Entity {
 	}
 
 	export class NotEncodableError extends Error {
-		constructor(entityConstructor: { new(): object }) {
+		constructor(entityConstructor: Function) {
 			super(`Cannot get code of ${entityConstructor.name} entity`);
 		}
 	}
