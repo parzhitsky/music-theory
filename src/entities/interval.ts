@@ -1,5 +1,6 @@
 import Entity from "./entity";
 import Adjustment from "./adjustment";
+import type PickByValue from "../pick-by-value";
 
 /** @private */
 const origins = {
@@ -62,12 +63,53 @@ const kinds = [
 
 /** @public */
 namespace Interval {
+	export type Augmentation = number;
+
+	export namespace Quality {
+		export type Perfect = "Perfect";
+		export type Major = "Major";
+		export type Minor = "Minor";
+		export type NonPerfect = Major | Minor;
+	}
+
+	export type Quality = Quality.Perfect | Quality.Major | Quality.Minor;
+
 	type Origins = typeof origins;
 
-	export type Kind = (typeof kinds)[number];
 	export type Origin = keyof Origins;
-	export type Quality = Origins[Origin]["quality"];
-	export type Augmentation = number;
+
+	export namespace Origin {
+		export type Perfect = keyof PickByValue<Origins, { quality: Quality.Perfect }>;
+		export type Major = keyof PickByValue<Origins, { quality: Quality.Major }>;
+		export type Minor = keyof PickByValue<Origins, { quality: Quality.Minor }>;
+		export type NonPerfect = Major | Minor;
+	}
+
+	type Kinds = typeof kinds;
+
+	export type Kind = Kinds[number];
+
+	export namespace Kind {
+		export type Perfect = Kinds[Origins[Origin.Perfect]["kindIndex"]];
+		export type NonPerfect = Kinds[Origins[Origin.NonPerfect]["kindIndex"]];
+	}
+
+	export namespace Name {
+		export type Perfect = `Perfect ${Kind.Perfect}`;
+		export type Major = `Major ${Kind.NonPerfect}`;
+		export type Minor = `Minor ${Kind.NonPerfect}`;
+		export type NonPerfect = Major | Minor;
+
+		export type Unison = `${Quality.Perfect} Unison`;
+		export type Second = `${Quality.NonPerfect} Second`;
+		export type Third = `${Quality.NonPerfect} Third`;
+		export type Fourth = `${Quality.Perfect} Fourth`;
+		export type Fifth = `${Quality.Perfect} Fifth`;
+		export type Sixth = `${Quality.NonPerfect} Sixth`;
+		export type Seventh = `${Quality.NonPerfect} Seventh`;
+	}
+
+	export type Name = Name.Perfect | Name.Major | Name.Minor;
 }
 
 /** @public */
@@ -79,6 +121,7 @@ class Interval extends Entity implements Entity.Adjustable {
 	public readonly quality = origins[this.origin].quality;
 	public readonly letterDiff = origins[this.origin].kindIndex;
 	public readonly kind = kinds[this.letterDiff];
+	public readonly name = (this.quality + this.kind) as Interval.Name;
 
 	public readonly semitonesWithoutAdjustment =
 		this.origin + this.augmentation + this.octaves * Interval.SEMITONES_IN_OCTAVE;
