@@ -98,7 +98,7 @@ class Interval extends Entity {
 			throw new Interval.InvalidArgumentError("octaves", octaves, "value must be an integer");
 
 		if (!adjustment.isZero && adjustment.unit !== "cent")
-			throw new Interval.UnsupportedAdjustmentError(adjustment, "intervals only support 'cent' adjustments");
+			throw new Interval.UnsupportedAdjustmentError(adjustment, "intervals support only zero and 'cent' adjustments");
 	}
 }
 
