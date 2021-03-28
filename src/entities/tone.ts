@@ -126,6 +126,18 @@ class Tone extends Entity {
 
 		return chunks.join("");
 	}
+
+	transpose(interval: Interval, direction = Entity.Direction.up): Tone {
+		const letterWithOverflow = this.letter + interval.letterDiff * direction;
+		const octaveRollOver = Math.floor(letterWithOverflow / Tone.LETTERS_IN_OCTAVE);
+		const letter = Tone.mod(letterWithOverflow);
+		const octave = this.octave + interval.octaves + octaveRollOver;
+		const valueNatural = Tone.calcValue(letter, Tone.Alteration.natural, octave);
+		const value = this.value + interval.semitones * direction;
+		const alteration = value - valueNatural;
+
+		return new Tone(letter, alteration, octave);
+	}
 }
 
 /** @public */
