@@ -61,6 +61,12 @@ namespace Entity {
 		}
 	}
 
+	export class FeatureNotImplementedError extends Error {
+		constructor(featureDescription: string) {
+			super("This feature is not implemented", featureDescription);
+		}
+	}
+
 	export abstract class Collection<Item extends Entity> extends Entity {
 		protected abstract readonly items: readonly Item[];
 

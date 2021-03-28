@@ -114,6 +114,10 @@ class Interval extends Entity implements Entity.Adjustable {
 
 		return new Interval(this.origin, this.augmentation, this.octaves, Adjustment.zero);
 	}
+
+	add(other: Interval): Interval {
+		throw new Interval.FeatureNotImplementedError("adding two intervals");
+	}
 }
 
 /** @public */
