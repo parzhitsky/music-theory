@@ -1,4 +1,5 @@
 import type Adjustment from "./adjustment";
+import type Interval from "./interval";
 
 declare global {
 	interface Function {
@@ -29,6 +30,10 @@ namespace Entity {
 		up = 1,
 		down = -1,
 	};
+
+	export interface Transposable {
+		transpose(interval: Interval, direction?: Direction): ThisType<this>;
+	}
 
 	export interface Adjustable {
 		readonly adjustment: Adjustment;

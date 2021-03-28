@@ -4,7 +4,7 @@ import Interval from "./interval";
 import Tone from "./tone";
 
 /** @public */
-class Pitch extends Entity implements Entity.Adjustable {
+class Pitch extends Entity implements Entity.Adjustable, Entity.Transposable {
 	/** Frequency of `Tone.BASE` */
 	public static readonly BASE_TONE_FREQUENCY = 440;
 	public static readonly OCTAVE_FREQUENCY_DIFFERENCE = 2;
@@ -70,6 +70,13 @@ class Pitch extends Entity implements Entity.Adjustable {
 			return this;
 
 		return new Pitch(this.tone, Adjustment.zero);
+	}
+
+	transpose(interval: Interval, direction = Entity.Direction.up): Pitch {
+		const adjustment = this.adjustment.add(interval.adjustment);
+		const tone = this.tone.transpose(interval.unadjusted(), direction);
+
+		return new Pitch(tone, adjustment);
 	}
 }
 

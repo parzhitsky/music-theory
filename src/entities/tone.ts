@@ -69,7 +69,7 @@ namespace Tone {
 }
 
 /** @public */
-class Tone extends Entity {
+class Tone extends Entity implements Entity.Transposable {
 	public static readonly LETTERS_IN_OCTAVE = Object.keys(letters).length as 7;
 	public static readonly BASE =
 		new Tone(/* Tone.Letter.A */ 5, /* Tone.Alteration.natural */ 0, /* Tone.Octave.oneLine */ 4);

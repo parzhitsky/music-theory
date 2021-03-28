@@ -2,6 +2,7 @@ import Entity from "./entity";
 import Duration from "./duration";
 import Note from "./note";
 import Pitch from "./pitch";
+import Interval from "./interval";
 
 /** @public */
 namespace Concord {
@@ -11,7 +12,7 @@ namespace Concord {
 }
 
 /** @public */
-class Concord extends Entity.Collection<Pitch> {
+class Concord extends Entity.Collection<Pitch> implements Entity.Transposable {
 	private static readonly CODE_PREFIX = "[";
 	private static readonly CODE_POSTFIX = "]";
 
@@ -27,6 +28,10 @@ class Concord extends Entity.Collection<Pitch> {
 		this.items = items
 			.map((item) => "pitch" in item ? item.pitch : item)
 			.sort((a, b) => a.frequency - b.frequency);
+	}
+
+	transpose(interval: Interval, direction = Entity.Direction.up): Concord {
+		return new Concord(this.duration, this.items.map((pitch) => pitch.transpose(interval, direction)));
 	}
 
 	getCode(params: Concord.GetCodeParams = {}): string {
