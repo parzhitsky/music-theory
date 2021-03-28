@@ -1,3 +1,5 @@
+import type Adjustment from "./adjustment";
+
 declare global {
 	interface Function {
 		new(...args: string[]): Function;
@@ -28,6 +30,12 @@ namespace Entity {
 		down = -1,
 	};
 
+	export abstract class Error extends global.Error {
+		constructor(message: string, hint?: string) {
+			super(`${message}${hint == null ? "" : ` (${hint})`}`);
+		}
+	}
+
 	export class NotEncodableError extends Error {
 		constructor(entityConstructor: Function) {
 			super(`Cannot get code of ${entityConstructor.name} entity`);
@@ -36,7 +44,13 @@ namespace Entity {
 
 	export class InvalidArgumentError extends Error {
 		constructor(argumentName: string, value: unknown, hint?: string) {
-			super(`Argument '${argumentName}' is invalid: ${value}${hint == null ? "" : ` (${hint})`}`);
+			super(`Argument '${argumentName}' is invalid: ${value}`, hint);
+		}
+	}
+
+	export class UnsupportedAdjustmentError extends Error {
+		constructor(adjustment: Adjustment, hint?: string) {
+			super(`Unsupported adjustment: ${JSON.stringify(adjustment)}`, hint);
 		}
 	}
 

@@ -36,7 +36,7 @@ class Pitch extends Entity {
 			this.frequency = Pitch.calcFrequency(semitones, Interval.SEMITONES_IN_OCTAVE) + adjustment.value;
 
 		else
-			throw new Pitch.InvalidAdjustmentError(adjustment);
+			throw new Pitch.UnsupportedAdjustmentError(adjustment);
 	}
 
 	/**
@@ -61,17 +61,6 @@ class Pitch extends Entity {
 
 /** @public */
 namespace Pitch {
-	export class UnknownAdjustmentUnitError extends Error {
-		constructor(unit: unknown) {
-			super(`Unknown adjustment unit: ${unit}`);
-		}
-	}
-
-	export class InvalidAdjustmentError extends Error {
-		constructor(adjustment: Adjustment) {
-			super(`Invalid adjustment: ${JSON.stringify(adjustment)}`);
-		}
-	}
 }
 
 export default Pitch;

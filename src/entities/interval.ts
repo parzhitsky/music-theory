@@ -90,7 +90,7 @@ class Interval extends Entity {
 		super();
 
 		if (octaves % 1 !== 0)
-			throw new Entity.InvalidArgumentError("octaves", octaves, "value must be an integer");
+			throw new Interval.InvalidArgumentError("octaves", octaves, "value must be an integer");
 	}
 }
 

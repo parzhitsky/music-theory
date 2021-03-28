@@ -37,9 +37,9 @@ namespace Adjustment {
 		| "herz"
 		;
 
-	export class UnitUnspecifiedError extends Error {
+	export class UnitUnspecifiedError extends Entity.Error {
 		constructor(value: number, unit: unknown) {
-			super(`Non-zero adjustment must have unit specified (value: ${value}, unit: ${unit})`);
+			super("Non-zero adjustment must have a specified unit", JSON.stringify({ value, unit }));
 		}
 	}
 }
