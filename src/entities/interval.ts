@@ -82,9 +82,9 @@ class Interval extends Entity implements Entity.Adjustable {
 
 	public readonly semitonesWithoutAdjustment =
 		this.origin + this.augmentation + this.octaves * Interval.SEMITONES_IN_OCTAVE;
-	public readonly semitonesWithAdjustment = this.semitonesWithoutAdjustment;
-	public readonly semitones =
-		this.semitonesWithoutAdjustment + this.adjustment.value * Interval.CENTS_IN_SEMITONE;
+	public readonly semitones = this.semitonesWithoutAdjustment;
+	public readonly semitonesWithAdjustment =
+		this.semitonesWithoutAdjustment + this.adjustment.value / Interval.CENTS_IN_SEMITONE;
 
 	constructor(
 		public readonly origin: Interval.Origin,
