@@ -71,7 +71,7 @@ namespace Interval {
 }
 
 /** @public */
-class Interval extends Entity implements Entity.Adjustable {
+class Interval extends Entity implements Entity.Adjustable, Entity.Transposable {
 	public static readonly SEMITONES_IN_OCTAVE = 12;
 	public static readonly CENTS_IN_SEMITONE = 100;
 	public static readonly CENTS_IN_OCTAVE = Interval.CENTS_IN_SEMITONE * Interval.SEMITONES_IN_OCTAVE;
@@ -115,8 +115,9 @@ class Interval extends Entity implements Entity.Adjustable {
 		return new Interval(this.origin, this.augmentation, this.octaves, Adjustment.zero);
 	}
 
-	add(other: Interval): Interval {
-		throw new Interval.FeatureNotImplementedError("adding two intervals");
+	transpose(interval: Interval, direction = Entity.Direction.up): Interval {
+		// TODO: maybe needed for Tonality tone augmentations
+		throw new Interval.FeatureNotImplementedError("transposing intervals");
 	}
 }
 
