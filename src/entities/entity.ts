@@ -29,7 +29,7 @@ namespace Entity {
 	export const enum Direction {
 		up = 1,
 		down = -1,
-	};
+	}
 
 	export interface Transposable {
 		transpose(interval: Interval, direction?: Direction): ThisType<this>;
