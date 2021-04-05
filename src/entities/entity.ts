@@ -42,6 +42,11 @@ namespace Entity {
 		unadjusted(): ThisType<this>;
 	}
 
+	export function assertIntegerArgument(name: string, value: number): never | void {
+		if (!Number.isInteger(value))
+			throw new InvalidArgumentError(name, value, "expected an integer");
+	}
+
 	export abstract class Error extends global.Error {
 		constructor(message: string, hint?: string) {
 			super(`${message}${hint == null ? "" : ` (${hint})`}`);

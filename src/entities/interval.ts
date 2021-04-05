@@ -94,8 +94,7 @@ class Interval extends Entity implements Entity.Adjustable, Entity.Transposable 
 	) {
 		super();
 
-		if (octaves % 1 !== 0)
-			throw new Interval.InvalidArgumentError("octaves", octaves, "value must be an integer");
+		Interval.assertIntegerArgument("octaves", octaves);
 
 		if (!adjustment.isZero && adjustment.unit !== "cent")
 			throw new Interval.UnsupportedAdjustmentError(adjustment, "intervals support only zero and 'cent' adjustments");
