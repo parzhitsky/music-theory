@@ -1,35 +1,36 @@
 import Entity from "./entity";
 import Interval from "./interval";
+import Step from "./step";
 
 /** @private */
 const letters = {
-	[0]: {
+	[Step.Value.tonic]: {
 		code: "C",
-		semitonesFromC: Interval.Origin.perfectUnison,
+		intervalFromC: Interval.Origin.perfectUnison,
 	},
-	[1]: {
+	[Step.Value.supertonic]: {
 		code: "D",
-		semitonesFromC: Interval.Origin.majorSecond,
+		intervalFromC: Interval.Origin.majorSecond,
 	},
-	[2]: {
+	[Step.Value.mediant]: {
 		code: "E",
-		semitonesFromC: Interval.Origin.majorThird,
+		intervalFromC: Interval.Origin.majorThird,
 	},
-	[3]: {
+	[Step.Value.subdominant]: {
 		code: "F",
-		semitonesFromC: Interval.Origin.perfectFourth,
+		intervalFromC: Interval.Origin.perfectFourth,
 	},
-	[4]: {
+	[Step.Value.dominant]: {
 		code: "G",
-		semitonesFromC: Interval.Origin.perfectFifth,
+		intervalFromC: Interval.Origin.perfectFifth,
 	},
-	[5]: {
+	[Step.Value.submediant]: {
 		code: "A",
-		semitonesFromC: Interval.Origin.majorSixth,
+		intervalFromC: Interval.Origin.majorSixth,
 	},
-	[6]: {
+	[Step.Value.subtonic]: {
 		code: "B",
-		semitonesFromC: Interval.Origin.majorSeventh,
+		intervalFromC: Interval.Origin.majorSeventh,
 	},
 } as const;
 
@@ -59,25 +60,23 @@ const alterations = {
 
 /** @public */
 namespace Tone {
-	type Letters = typeof letters;
-
-	export type Letter = keyof Letters;
+	export type Letter = Step.Value;
 	export type Alteration = number;
 	export type Octave = number;
 
-	export type LetterCode = Letters[Letter]["code"];
+	export type LetterCode = (typeof letters)[Letter]["code"];
 }
 
 /** @public */
 class Tone extends Entity implements Entity.Transposable {
-	public static readonly LETTERS_IN_OCTAVE = Object.keys(letters).length as 7;
+	public static readonly LETTERS_IN_OCTAVE = Step.STEPS_IN_OCTAVE;
 	public static readonly BASE =
 		new Tone(/* Tone.Letter.A */ 5, /* Tone.Alteration.natural */ 0, /* Tone.Octave.oneLine */ 4);
 
 	protected static readonly DOUBLE_SINGLE_SHARP_PATTERN = new RegExp(alterations[1].code.repeat(2), "g");
 
 	static calcValue(letter: Tone.Letter, alteration: Tone.Alteration, octave: Tone.Octave): number {
-		return octave * Interval.SEMITONES_IN_OCTAVE + letters[letter].semitonesFromC + alteration;
+		return octave * Interval.SEMITONES_IN_OCTAVE + letters[letter].intervalFromC + alteration;
 	}
 
 	static calcDistance(to: Tone, from = Tone.BASE): number {

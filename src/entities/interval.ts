@@ -1,70 +1,71 @@
 import Entity from "./entity";
 import Adjustment from "./adjustment";
+import Step from "./step";
 
 /** @private */
 const origins = {
 	[0]: {
 		quality: "Perfect",
-		kindIndex: 0,
+		stepValue: Step.Value.tonic,
 	},
 	[1]: {
 		quality: "Minor",
-		kindIndex: 1,
+		stepValue: Step.Value.supertonic,
 	},
 	[2]: {
 		quality: "Major",
-		kindIndex: 1,
+		stepValue: Step.Value.supertonic,
 	},
 	[3]: {
 		quality: "Minor",
-		kindIndex: 2,
+		stepValue: Step.Value.mediant,
 	},
 	[4]: {
 		quality: "Major",
-		kindIndex: 2,
+		stepValue: Step.Value.mediant,
 	},
 	[5]: {
 		quality: "Perfect",
-		kindIndex: 3,
+		stepValue: Step.Value.subdominant,
 	},
 	[7]: {
 		quality: "Perfect",
-		kindIndex: 4,
+		stepValue: Step.Value.dominant,
 	},
 	[8]: {
 		quality: "Minor",
-		kindIndex: 5,
+		stepValue: Step.Value.submediant,
 	},
 	[9]: {
 		quality: "Major",
-		kindIndex: 5,
+		stepValue: Step.Value.submediant,
 	},
 	[10]: {
 		quality: "Minor",
-		kindIndex: 6,
+		stepValue: Step.Value.subtonic,
 	},
 	[11]: {
 		quality: "Major",
-		kindIndex: 6,
+		stepValue: Step.Value.subtonic,
 	},
 } as const;
 
 /** @private */
-const kinds = [
-	"Unison",
-	"Second",
-	"Third",
-	"Fourth",
-	"Fifth",
-	"Sixth",
-	"Seventh",
-] as const;
+const kinds = {
+	[Step.Value.tonic]: "Unison",
+	[Step.Value.supertonic]: "Second",
+	[Step.Value.mediant]: "Third",
+	[Step.Value.subdominant]: "Fourth",
+	[Step.Value.dominant]: "Fifth",
+	[Step.Value.submediant]: "Sixth",
+	[Step.Value.subtonic]: "Seventh",
+} as const;
 
 /** @public */
 namespace Interval {
 	type Origins = typeof origins;
 
-	export type Kind = (typeof kinds)[number];
+	export type Kind = (typeof kinds)[Step.Value];
 	export type Origin = keyof Origins;
 	export type Quality = Origins[Origin]["quality"];
 	export type Augmentation = number;
@@ -77,7 +78,7 @@ class Interval extends Entity implements Entity.Adjustable, Entity.Transposable 
 	public static readonly CENTS_IN_OCTAVE = Interval.CENTS_IN_SEMITONE * Interval.SEMITONES_IN_OCTAVE;
 
 	public readonly quality = origins[this.origin].quality;
-	public readonly letterDiff = origins[this.origin].kindIndex;
+	public readonly letterDiff = origins[this.origin].stepValue;
 	public readonly kind = kinds[this.letterDiff];
 
 	public readonly semitonesWithoutAdjustment =
