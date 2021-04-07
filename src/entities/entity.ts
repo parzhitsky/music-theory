@@ -15,6 +15,11 @@ abstract class Entity {
 		return ((operand % base) + base) % base;
 	}
 
+	protected static assertIntegerArgument(name: string, value: number): never | void {
+		if (!Number.isInteger(value))
+			throw new this.InvalidArgumentError(name, value, "expected an integer");
+	}
+
 	getCode(): string {
 		throw new Entity.NotEncodableError(this.constructor);
 	}
@@ -40,11 +45,6 @@ namespace Entity {
 
 		adjust(adjustment: Adjustment): ThisType<this>;
 		unadjusted(): ThisType<this>;
-	}
-
-	export function assertIntegerArgument(name: string, value: number): never | void {
-		if (!Number.isInteger(value))
-			throw new InvalidArgumentError(name, value, "expected an integer");
 	}
 
 	export abstract class Error extends global.Error {
