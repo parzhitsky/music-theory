@@ -8,7 +8,7 @@ const semitone = new Interval(Interval.Origin.minorSecond);
 
 /** @private */
 const scaleMatrix = {
-	major: [
+	Major: [
 		tone,
 		tone,
 		semitone,
@@ -17,7 +17,7 @@ const scaleMatrix = {
 		tone,
 		semitone,
 	],
-	minor: [
+	Minor: [
 		tone,
 		semitone,
 		tone,
