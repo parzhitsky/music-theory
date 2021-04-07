@@ -144,6 +144,19 @@ namespace Interval {
 		export const aug = +1;
 		export const augAug = +2;
 	};
+
+	export const perfectUnison = new Interval(Interval.Origin.perfectUnison);
+	export const minorSecond = new Interval(Interval.Origin.minorSecond);
+	export const majorSecond = new Interval(Interval.Origin.majorSecond);
+	export const minorThird = new Interval(Interval.Origin.minorThird);
+	export const majorThird = new Interval(Interval.Origin.majorThird);
+	export const perfectFourth = new Interval(Interval.Origin.perfectFourth);
+	export const perfectFifth = new Interval(Interval.Origin.perfectFifth);
+	export const minorSixth = new Interval(Interval.Origin.minorSixth);
+	export const majorSixth = new Interval(Interval.Origin.majorSixth);
+	export const minorSeventh = new Interval(Interval.Origin.minorSeventh);
+	export const majorSeventh = new Interval(Interval.Origin.majorSeventh);
+	export const perfectOctave = new Interval(Interval.Origin.perfectUnison, 0, 1);
 }
 
 export default Interval;
