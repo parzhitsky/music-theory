@@ -87,6 +87,8 @@ class Interval extends Entity implements Entity.Adjustable, Entity.Transposable 
 	public readonly semitones = this.semitonesWithoutAdjustment;
 	public readonly semitonesWithAdjustment =
 		this.semitonesWithoutAdjustment + this.adjustment.value / Interval.CENTS_IN_SEMITONE;
+	public readonly cents =
+		this.semitonesWithoutAdjustment * Interval.CENTS_IN_SEMITONE + this.adjustment.value;
 
 	constructor(
 		public readonly origin: Interval.Origin,
