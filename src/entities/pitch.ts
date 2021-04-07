@@ -59,7 +59,7 @@ class Pitch extends Entity implements Entity.Adjustable, Entity.Transposable {
 	}
 
 	adjust(adjustment: Adjustment): Pitch {
-		if (this.adjustment.isZero)
+		if (adjustment.isZero)
 			return this;
 
 		return new Pitch(this.tone, this.adjustment.add(adjustment));
