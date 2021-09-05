@@ -44,13 +44,13 @@ namespace Step {
 		export const subtonic = 6;
 	}
 
-	export const tonic = new Step(Step.Value.tonic);
-	export const supertonic = new Step(Step.Value.supertonic);
-	export const mediant = new Step(Step.Value.mediant);
-	export const subdominant = new Step(Step.Value.subdominant);
-	export const dominant = new Step(Step.Value.dominant);
-	export const submediant = new Step(Step.Value.submediant);
-	export const subtonic = new Step(Step.Value.subtonic);
+	export const tonic = new Step(Value.tonic);
+	export const supertonic = new Step(Value.supertonic);
+	export const mediant = new Step(Value.mediant);
+	export const subdominant = new Step(Value.subdominant);
+	export const dominant = new Step(Value.dominant);
+	export const submediant = new Step(Value.submediant);
+	export const subtonic = new Step(Value.subtonic);
 }
 
 export default Step;

@@ -100,7 +100,7 @@ namespace Alteration {
 		concise = true,
 	}: Entity.GetCodeParams = {}): string {
 		if (value === 0)
-			return concise ? "" : Alteration.Code.natural;
+			return concise ? "" : Code.natural;
 
 		if (value in alterations)
 			return alterations[value as Value.Known].code;
@@ -109,7 +109,7 @@ namespace Alteration {
 		const sign = Math.sign(value) as Entity.Direction;
 		const code = alterations[sign].code;
 
-		return code.repeat(size).replace(doubleSingleSharpPattern, Alteration.Code.doubleSharp);
+		return code.repeat(size).replace(doubleSingleSharpPattern, Code.doubleSharp);
 	}
 
 	// TODO: function getValueByCode()

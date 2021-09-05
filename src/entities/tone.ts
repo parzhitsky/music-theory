@@ -181,16 +181,16 @@ namespace Tone {
 		export const fiveLine = 8;
 	}
 
-	export const C = new Tone(Tone.Letter.C);
-	export const D = new Tone(Tone.Letter.D);
-	export const E = new Tone(Tone.Letter.E);
-	export const F = new Tone(Tone.Letter.F);
-	export const G = new Tone(Tone.Letter.G);
-	export const A = new Tone(Tone.Letter.A);
-	export const B = new Tone(Tone.Letter.B);
+	export const C = new Tone(Letter.C);
+	export const D = new Tone(Letter.D);
+	export const E = new Tone(Letter.E);
+	export const F = new Tone(Letter.F);
+	export const G = new Tone(Letter.G);
+	export const A = new Tone(Letter.A);
+	export const B = new Tone(Letter.B);
 
 	/** @deprecated Use `Tone.B` instead */
-	export const H = new Tone(Tone.Letter.H);
+	export const H = new Tone(Letter.H);
 }
 
 export default Tone;
