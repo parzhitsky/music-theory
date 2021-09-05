@@ -68,7 +68,7 @@ namespace Tone {
 }
 
 /** @public */
-class Tone extends Entity implements Entity.Transposable {
+class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 	public static readonly LETTERS_IN_OCTAVE = Step.STEPS_IN_OCTAVE;
 	public static readonly BASE =
 		new Tone(/* Tone.Letter.A */ 5, /* Tone.Alteration.natural */ 0, /* Tone.Octave.oneLine */ 4);
@@ -139,6 +139,13 @@ class Tone extends Entity implements Entity.Transposable {
 		const alteration = value - valueNatural;
 
 		return new Tone(letter, alteration, octave);
+	}
+
+	alter(alteration: Tone.Alteration): Tone {
+		if (alteration === 0)
+			return this;
+
+		return new Tone(this.letter, this.alteration + alteration, this.octave);
 	}
 }
 
