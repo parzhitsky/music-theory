@@ -1,6 +1,6 @@
 import type Adjustment from "./adjustment";
+import type Alteration from "./alteration";
 import type Interval from "./interval";
-import type Tone from "./tone";
 
 declare global {
 	interface Constructor<Instance extends object = object> {
@@ -52,9 +52,9 @@ namespace Entity {
 	}
 
 	export interface Alterable {
-		readonly alteration: Tone.Alteration;
+		readonly alteration: Alteration;
 
-		alter(alteration: Tone.Alteration): ThisType<this>;
+		alter(alteration: Alteration): ThisType<this>;
 		unaltered(): ThisType<this>;
 	}
 

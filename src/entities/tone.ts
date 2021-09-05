@@ -1,3 +1,4 @@
+import Alteration from "./alteration";
 import Adjustment from "./adjustment";
 import Entity from "./entity";
 import Interval from "./interval";
@@ -35,30 +36,6 @@ const letters = {
 	},
 } as const;
 
-/** @private */
-const alterations = {
-	[-2]: {
-		name: "doubleFlat",
-		code: "bb",
-	},
-	[-1]: {
-		name: "flat",
-		code: "b",
-	},
-	[+0]: {
-		name: "natural",
-		code: "n",
-	},
-	[+1]: {
-		name: "sharp",
-		code: "#",
-	},
-	[+2]: {
-		name: "doubleSharp",
-		code: "x",
-	},
-} as const;
-
 /** @public */
 namespace Tone {
 	export type Letter = Step.Value;
@@ -78,7 +55,6 @@ namespace Tone {
 
 	export type LetterCode = (typeof letters)[Letter]["code"];
 
-	export type Alteration = number;
 	export type Octave = number;
 
 	export namespace Octave {
@@ -99,12 +75,9 @@ namespace Tone {
 /** @public */
 class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 	public static readonly LETTERS_IN_OCTAVE = Step.STEPS_IN_OCTAVE;
-	public static readonly BASE =
-		new Tone(/* Tone.Letter.A */ 5, /* Tone.Alteration.natural */ 0, /* Tone.Octave.oneLine */ 4);
+	public static readonly BASE = new Tone(/* Tone.Letter.A */ 5, Alteration.Value.natural, /* Tone.Octave.oneLine */ 4);
 
-	protected static readonly DOUBLE_SINGLE_SHARP_PATTERN = new RegExp(alterations[1].code.repeat(2), "g");
-
-	static calcValue(letter: Tone.Letter, alteration: Tone.Alteration, octave: Tone.Octave): number {
+	static calcValue(letter: Tone.Letter, alteration: Alteration, octave: Tone.Octave): number {
 		return octave * Interval.SEMITONES_IN_OCTAVE + letters[letter].intervalFromC + alteration;
 	}
 
@@ -120,7 +93,7 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 
 	constructor(
 		public readonly letter: Tone.Letter,
-		public readonly alteration: Tone.Alteration = Tone.Alteration.natural,
+		public readonly alteration: Alteration = Alteration.Value.natural,
 		public readonly octave: Tone.Octave = Tone.Octave.oneLine,
 	) {
 		super();
@@ -137,22 +110,14 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 	 * gSharp3.getCode();
 	 * // => "G#3"
 	 */
-	getCode(params: Entity.GetCodeParams = {}): string {
-		const { concise = true } = params;
-
-		const chunks = [ letters[this.letter].code, "", this.octave ];
-
-		if (this.alteration !== 0) {
-			const sign = Math.sign(this.alteration) as Entity.Direction;
-			const character = alterations[sign].code;
-			const size = Math.abs(this.alteration);
-			const string = character.repeat(size);
-
-			chunks[1] = string.replace(Tone.DOUBLE_SINGLE_SHARP_PATTERN, Tone.AlterationCode.doubleSharp);
-		}
-
-		else if (!concise)
-			chunks[1] = Tone.AlterationCode.natural;
+	getCode({
+		concise = true,
+	}: Entity.GetCodeParams = {}): string {
+		const chunks = [
+			letters[this.letter].code,
+			Alteration.getCodeByValue(this.alteration, { concise }),
+			this.octave,
+		];
 
 		return chunks.join("");
 	}
@@ -165,14 +130,14 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 		const octaveRollOver = Math.floor(letterWithOverflow / Tone.LETTERS_IN_OCTAVE);
 		const letter = Tone.mod(letterWithOverflow);
 		const octave = this.octave + interval.octaves + octaveRollOver;
-		const valueNatural = Tone.calcValue(letter, Tone.Alteration.natural, octave);
+		const valueNatural = Tone.calcValue(letter, Alteration.Value.natural, octave);
 		const value = this.value + interval.semitones * direction;
 		const alteration = value - valueNatural;
 
 		return new Tone(letter, alteration, octave);
 	}
 
-	alter(alteration: Tone.Alteration): Tone {
+	alter(alteration: Alteration): Tone {
 		if (alteration === 0)
 			return this;
 
@@ -183,7 +148,7 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 		if (this.alteration === 0)
 			return this;
 
-		return new Tone(this.letter, Tone.Alteration.natural, this.octave);
+		return new Tone(this.letter, Alteration.Value.natural, this.octave);
 	}
 }
 
@@ -200,22 +165,6 @@ namespace Tone {
 
 		/** @deprecated Use `Tone.Letter.B` instead */
 		export const H = Step.Value.subtonic;
-	}
-
-	export namespace Alteration {
-		export const doubleFlat = -2;
-		export const flat = -1;
-		export const natural = 0;
-		export const sharp = 1;
-		export const doubleSharp = 2;
-	}
-
-	export namespace AlterationCode {
-		export const doubleFlat = alterations[Alteration.doubleFlat].code;
-		export const flat = alterations[Alteration.flat].code;
-		export const natural = alterations[Alteration.natural].code;
-		export const sharp = alterations[Alteration.sharp].code;
-		export const doubleSharp = alterations[Alteration.doubleSharp].code;
 	}
 
 	export namespace Octave {
