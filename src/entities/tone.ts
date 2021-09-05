@@ -105,9 +105,7 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 
 	/**
 	 * @example
-	 * const gSharp3 = new Tone(4, 1, 3);
-	 *
-	 * gSharp3.getCode();
+	 * new Tone(4, 1, 3).getCode();
 	 * // => "G#3"
 	 */
 	getCode({
