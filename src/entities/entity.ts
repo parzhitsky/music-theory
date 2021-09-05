@@ -18,9 +18,10 @@ abstract class Entity {
 		return ((operand % base) + base) % base;
 	}
 
-	protected static assertIntegerArgument(name: string, value: number): never | void {
-		if (!Number.isInteger(value))
-			throw new this.InvalidArgumentError(name, value, "expected an integer");
+	protected static assertIntegerArguments(args: Record<string, number>): never | void {
+		for (const name in args)
+			if (!Number.isInteger(args[name]))
+				throw new this.InvalidArgumentError(name, args[name], "expected an integer");
 	}
 
 	getCode(): string {

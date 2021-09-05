@@ -110,6 +110,8 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 	) {
 		super();
 
+		Tone.assertIntegerArguments({ alteration, octave });
+
 		this.value = Tone.calcValue(letter, alteration, octave);
 	}
 

@@ -28,8 +28,7 @@ class Step extends Entity {
 	) {
 		super();
 
-		Step.assertIntegerArgument("alteration", alteration);
-		Step.assertIntegerArgument("octave", octave);
+		Step.assertIntegerArguments({ alteration, octave });
 	}
 }
 
