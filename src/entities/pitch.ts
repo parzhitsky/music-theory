@@ -36,7 +36,7 @@ class Pitch extends Entity implements Entity.Adjustable, Entity.Transposable {
 			this.frequency = Pitch.calcFrequency(semitones, Interval.SEMITONES_IN_OCTAVE) + adjustment.value;
 
 		else
-			throw new Pitch.UnsupportedAdjustmentError(adjustment);
+			throw new Adjustment.UnsupportedError(adjustment, "pitches only support 'cent' and 'herz' adjustments; other adjustments must be zero");
 	}
 
 	/**

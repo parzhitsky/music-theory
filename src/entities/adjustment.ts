@@ -57,6 +57,12 @@ namespace Adjustment {
 		| "herz"
 		;
 
+	export class UnsupportedError extends Entity.Error {
+		constructor(adjustment: Adjustment, reason: string) {
+			super(`Unsupported adjustment: ${JSON.stringify(adjustment)}`, reason);
+		}
+	}
+
 	export class UnitUnspecifiedError extends Entity.Error {
 		constructor(value: number, unit: unknown) {
 			super("Non-zero adjustment must have a specified unit", JSON.stringify({ value, unit }));

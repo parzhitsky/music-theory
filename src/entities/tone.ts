@@ -1,3 +1,4 @@
+import Adjustment from "./adjustment";
 import Entity from "./entity";
 import Interval from "./interval";
 import Step from "./step";
@@ -144,7 +145,7 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 
 	transpose(interval: Interval, direction = Entity.Direction.up): Tone {
 		if (!interval.adjustment.isZero)
-			throw new Tone.UnsupportedAdjustmentError(interval.adjustment, "tones can be transposed only by unadjusted intervals");
+			throw new Adjustment.UnsupportedError(interval.adjustment, "tones can be transposed only by unadjusted intervals");
 
 		const letterWithOverflow = this.letter + interval.letterDiff * direction;
 		const octaveRollOver = Math.floor(letterWithOverflow / Tone.LETTERS_IN_OCTAVE);

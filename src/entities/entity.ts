@@ -75,12 +75,6 @@ namespace Entity {
 		}
 	}
 
-	export class UnsupportedAdjustmentError extends Error {
-		constructor(adjustment: Adjustment, hint?: string) {
-			super(`Unsupported adjustment: ${JSON.stringify(adjustment)}`, hint);
-		}
-	}
-
 	export class FeatureNotImplementedError extends Error {
 		constructor(featureDescription: string) {
 			super("This feature is not implemented", featureDescription);
