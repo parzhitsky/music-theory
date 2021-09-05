@@ -81,14 +81,10 @@ class Interval extends Entity implements Entity.Adjustable, Entity.Transposable 
 	public readonly letterDiff = origins[this.origin].stepValue;
 	public readonly kind = kinds[this.letterDiff];
 
-	public readonly semitonesWithoutAdjustment =
-		this.origin + this.augmentation + this.octaves * Interval.SEMITONES_IN_OCTAVE;
-	/** @alias semitonesWithoutAdjustment */
-	public readonly semitones = this.semitonesWithoutAdjustment;
-	public readonly semitonesWithAdjustment =
-		this.semitonesWithoutAdjustment + this.adjustment.value / Interval.CENTS_IN_SEMITONE;
-	public readonly cents =
-		this.semitonesWithoutAdjustment * Interval.CENTS_IN_SEMITONE + this.adjustment.value;
+	protected readonly semitonesWithoutAdjustment = this.origin + this.augmentation + this.octaves * Interval.SEMITONES_IN_OCTAVE;
+	public readonly semitones = this.semitonesWithoutAdjustment + this.adjustment.value / Interval.CENTS_IN_SEMITONE;
+	public readonly cents = this.semitonesWithoutAdjustment * Interval.CENTS_IN_SEMITONE + this.adjustment.value;
+	public readonly isZero = this.cents === 0;
 
 	constructor(
 		public readonly origin: Interval.Origin,
