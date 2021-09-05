@@ -55,6 +55,7 @@ namespace Entity {
 		readonly alteration: Tone.Alteration;
 
 		alter(alteration: Tone.Alteration): ThisType<this>;
+		unaltered(): ThisType<this>;
 	}
 
 	export abstract class Error extends global.Error {

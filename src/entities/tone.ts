@@ -164,6 +164,13 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 
 		return new Tone(this.letter, this.alteration + alteration, this.octave);
 	}
+
+	unaltered(): Tone {
+		if (this.alteration === 0)
+			return this;
+
+		return new Tone(this.letter, Tone.Alteration.natural, this.octave);
+	}
 }
 
 /** @public */
