@@ -61,10 +61,24 @@ const alterations = {
 /** @public */
 namespace Tone {
 	export type Letter = Step.Value;
-	export type Alteration = number;
-	export type Octave = number;
+
+	export namespace Letter {
+		export type C = Step.Value.Tonic;
+		export type D = Step.Value.Supertonic;
+		export type E = Step.Value.Mediant;
+		export type F = Step.Value.Subdominant;
+		export type G = Step.Value.Dominant;
+		export type A = Step.Value.Submediant;
+		export type B = Step.Value.Subtonic;
+
+		/** @deprecated Use `Tone.Letter.B` instead */
+		export type H = Step.Value.Subtonic;
+	}
 
 	export type LetterCode = (typeof letters)[Letter]["code"];
+
+	export type Alteration = number;
+	export type Octave = number;
 }
 
 /** @public */
@@ -152,16 +166,16 @@ class Tone extends Entity implements Entity.Transposable, Entity.Alterable {
 /** @public */
 namespace Tone {
 	export namespace Letter {
-		export const C = 0;
-		export const D = 1;
-		export const E = 2;
-		export const F = 3;
-		export const G = 4;
-		export const A = 5;
-		export const B = 6;
+		export const C = Step.Value.tonic;
+		export const D = Step.Value.supertonic;
+		export const E = Step.Value.mediant;
+		export const F = Step.Value.subdominant;
+		export const G = Step.Value.dominant;
+		export const A = Step.Value.submediant;
+		export const B = Step.Value.subtonic;
 
 		/** @deprecated Use `Tone.Letter.B` instead */
-		export const H = 6;
+		export const H = Step.Value.subtonic;
 	}
 
 	export namespace Alteration {
@@ -192,6 +206,17 @@ namespace Tone {
 		export const fourLine = 7;
 		export const fiveLine = 8;
 	}
+
+	export const C = new Tone(Tone.Letter.C);
+	export const D = new Tone(Tone.Letter.D);
+	export const E = new Tone(Tone.Letter.E);
+	export const F = new Tone(Tone.Letter.F);
+	export const G = new Tone(Tone.Letter.G);
+	export const A = new Tone(Tone.Letter.A);
+	export const B = new Tone(Tone.Letter.B);
+
+	/** @deprecated Use `Tone.B` instead */
+	export const H = new Tone(Tone.Letter.H);
 }
 
 export default Tone;
