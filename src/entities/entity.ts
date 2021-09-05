@@ -2,9 +2,11 @@ import type Adjustment from "./adjustment";
 import type Interval from "./interval";
 
 declare global {
-	interface Function {
-		new(...args: string[]): Function;
+	interface Constructor<Instance extends object = object> {
+		new (...args: never[]): Instance;
 	}
+
+	interface Function extends Constructor {}
 }
 
 /** @public */
@@ -54,7 +56,7 @@ namespace Entity {
 	}
 
 	export class NotEncodableError extends Error {
-		constructor(entityConstructor: Function) {
+		constructor(entityConstructor: Constructor) {
 			super(`Cannot get code of ${entityConstructor.name} entity`);
 		}
 	}
