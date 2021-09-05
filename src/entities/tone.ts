@@ -80,6 +80,20 @@ namespace Tone {
 
 	export type Alteration = number;
 	export type Octave = number;
+
+	export namespace Octave {
+		export type SubContra = 0;
+		export type Contra = 1;
+		export type Great = 2;
+		export type Small = 3;
+		export type OneLine = 4;
+		/** @alias Tone.Octave.OneLine */
+		export type Middle = 4;
+		export type TwoLine = 5;
+		export type ThreeLine = 6;
+		export type FourLine = 7;
+		export type FiveLine = 8;
+	}
 }
 
 /** @public */
@@ -210,7 +224,8 @@ namespace Tone {
 		export const great = 2;
 		export const small = 3;
 		export const oneLine = 4;
-		/** @alias Tone.Octave.oneLine */ export const middle = 4;
+		/** @alias Tone.Octave.oneLine */
+		export const middle = 4;
 		export const twoLine = 5;
 		export const threeLine = 6;
 		export const fourLine = 7;
